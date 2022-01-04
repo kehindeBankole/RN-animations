@@ -1,11 +1,42 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-
+import React, { useEffect } from "react";
+import { Button, StyleSheet, Text, View } from "react-native";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  withSpring,
+  withRepeat,
+} from "react-native-reanimated";
 export default function App() {
+  const mysharedvalue = useSharedValue(0);
+  const mysharedvalueradius = useSharedValue(0);
+  const myreactiveworklet = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: mysharedvalue.value }],
+      borderRadius: mysharedvalueradius.value,
+    };
+  });
+  useEffect(() => {
+    mysharedvalue.value = withRepeat(
+      withTiming(2, { duration: 1500 }),
+      3,
+      true
+    );
+    mysharedvalueradius.value = withRepeat(
+      withTiming(200, { duration: 1500 }),
+      3,
+      true
+    );
+  }, []);
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+      <Animated.View style={[styles.box, myreactiveworklet]} />
+      {/* <Button
+        title="toggle"
+        onPress={() => {
+          mysharedvalue.value = withTiming(200, { duration: 3000 });
+        }}
+      /> */}
     </View>
   );
 }
@@ -13,8 +44,15 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "blue",
+    // paddingTop: 100,
+    // paddingHorizontal: 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  box: {
+    width: 50,
+    height: 50,
+    backgroundColor: "red",
   },
 });
